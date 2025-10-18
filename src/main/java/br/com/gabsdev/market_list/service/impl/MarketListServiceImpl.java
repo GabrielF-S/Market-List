@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,6 +34,7 @@ public class MarketListServiceImpl implements MarketlListService {
     @Override
     public MarketList claseMarketList(MarketList marketList) {
         marketList.setCurrent(false);
+        marketList.setBuyDate(LocalDate.now());
         repository.save(marketList);
         return null;
     }
