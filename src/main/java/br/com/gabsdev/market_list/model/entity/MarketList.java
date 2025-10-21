@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "market_list_tb")
+@Table(name = "market_list")
 @Data
 @AllArgsConstructor
 public class MarketList {
@@ -45,6 +45,18 @@ public class MarketList {
     public MarketList() {
         this.current = true;
         this.itemsList = new ArrayList<>();
+        this.totalAmounth = new BigDecimal(0);
 
     }
+
+    public BigDecimal getTotalAmounth(){
+        BigDecimal total = BigDecimal.ZERO;
+        if (!this.getItemsList().isEmpty()){
+            for( Item item : this.getItemsList()){
+                total= total.add(new BigDecimal(item.getValue().toString()));
+            }
+        }
+        return total;
+    }
+
 }

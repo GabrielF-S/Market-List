@@ -20,7 +20,7 @@ public class MarketListServiceImpl implements MarketlListService {
 
     @Override
     public MarketList addToMarketList(Item item) {
-        MarketList currentMarketList = repository.findCurrentList().orElse(new MarketList());
+        MarketList currentMarketList = repository.findByCurrentTrue().orElse(new MarketList());
         currentMarketList.getItemsList().add(item);
         repository.save(currentMarketList);
         return  currentMarketList;
@@ -28,7 +28,7 @@ public class MarketListServiceImpl implements MarketlListService {
 
     @Override
     public MarketList getCurrentMarketList() {
-        return repository.findCurrentList().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
+        return repository.findByCurrentTrue().orElse(new MarketList());
     }
 
     @Override
@@ -46,12 +46,18 @@ public class MarketListServiceImpl implements MarketlListService {
 
     @Override
     public List<MarketList> getAllList() {
-        return repository.findAllOldList().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
+        return repository.findByCurrentFalse().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
     }
 
     private BigDecimal calculateTotalAmount() {
-        MarketList currentMarketList = repository.findCurrentList().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
-        currentMarketList.getItemsList().stream().forEach(item -> currentMarketList.getTotalAmounth().add(item.getValue()));
+        MarketList currentMarketList = repository.findByCurrentTrue().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
+
+//        BigDecimal total = BigDecimal.ZERO;
+//
+//        for( Item item : currentMarketList.getItemsList()){
+//            total= total.add(new BigDecimal(item.getValue().toString()));
+//        }
+//        currentMarketList.setTotalAmounth(total);
         return  currentMarketList.getTotalAmounth();
 
     }

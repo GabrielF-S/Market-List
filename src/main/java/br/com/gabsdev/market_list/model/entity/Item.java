@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.UUID;
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 public class Item {
     @Id
@@ -24,13 +23,20 @@ public class Item {
     private BigDecimal realdValue;
     private Boolean addedToCart;
     private int quantity;
-   ;
 
+
+    public Item() {
+
+        this.expectedValue = new BigDecimal(0);
+        this.realdValue = new BigDecimal(0);
+    }
 
     public BigDecimal getValue() {
-        var value = realdValue != null ? realdValue : expectedValue;
-        for( int qtd = 0; qtd < this.quantity; qtd++){
-            value.add(value);
+
+        var value = realdValue.equals(BigDecimal.ZERO) ? expectedValue : realdValue;
+
+        for( int qtd = 1; qtd < this.quantity; qtd++){
+            value = value.add(new BigDecimal(value.intValue()));
         }
         return value;
     }
@@ -39,11 +45,11 @@ public class Item {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Item item = (Item) o;
-        return quantity == item.quantity && Objects.equals(id, item.id) && Objects.equals(name, item.name);
+        return Objects.equals(name, item.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, quantity);
+        return Objects.hashCode(name);
     }
 }

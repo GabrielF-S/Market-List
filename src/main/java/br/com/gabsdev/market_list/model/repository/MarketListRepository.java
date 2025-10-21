@@ -8,12 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 @Repository
 public interface MarketListRepository extends JpaRepository<MarketList, UUID> {
 
-    @Query(value = "Select m FROM MarketList WHERE m.current = true", nativeQuery = true)
-    Optional<MarketList> findCurrentList();
-
-    @Query(value = "Select m FROM MarketList WHERE m.current = false", nativeQuery = true)
-    Optional<List<MarketList> >findAllOldList();
+    Optional<MarketList> findByCurrentTrue();
+    Optional<List<MarketList>> findByCurrentFalse();
 }
