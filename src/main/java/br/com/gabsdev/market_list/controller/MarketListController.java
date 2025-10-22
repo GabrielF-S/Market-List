@@ -3,9 +3,7 @@ package br.com.gabsdev.market_list.controller;
 import br.com.gabsdev.market_list.model.entity.Item;
 import br.com.gabsdev.market_list.model.entity.MarketList;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,5 +25,7 @@ public interface MarketListController {
     @PostMapping(value = "addItem")
     ResponseEntity<MarketList> addItemToMarketList(@RequestBody Item item);
 
+    @DeleteMapping(value = "/remove")
+    ResponseEntity<Void> removeToCart(@RequestBody Item item);
 
 }

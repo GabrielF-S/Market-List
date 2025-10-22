@@ -20,7 +20,7 @@ public class MarketListControllerImpl implements MarketListController {
     private final MarketlListService service;
     @Override
     public ResponseEntity<MarketList> closeMarketList(MarketList marketList) {
-        return ResponseEntity.ok(service.claseMarketList(marketList));
+        return ResponseEntity.ok(service.closeMarketList(marketList));
     }
 
     @Override
@@ -38,6 +38,11 @@ public class MarketListControllerImpl implements MarketListController {
     @Override
     public ResponseEntity<MarketList> addItemToMarketList(Item item) {
         return ResponseEntity.ok(service.addToMarketList(item));
+    }
+
+    @Override
+    public ResponseEntity<Void> removeToCart(Item item) {
+        return ResponseEntity.ok(service.removeItem(item));
     }
 
     @Override

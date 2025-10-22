@@ -21,7 +21,17 @@ public class MarketListServiceImpl implements MarketlListService {
     @Override
     public MarketList addToMarketList(Item item) {
         MarketList currentMarketList = repository.findByCurrentTrue().orElse(new MarketList());
-        currentMarketList.getItemsList().add(item);
+        if(!currentMarketList.getItemsList().contains(item)){
+            currentMarketList.getItemsList().add(item);
+        }else {
+            for(Item i : currentMarketList.getItemsList()){
+                if (i.equals(item)){
+                    int qtd = i.getQuantity() + item.getQuantity();
+                    i.setQuantity(qtd);
+                }
+            }
+
+        }
         repository.save(currentMarketList);
         return  currentMarketList;
     }
@@ -32,11 +42,11 @@ public class MarketListServiceImpl implements MarketlListService {
     }
 
     @Override
-    public MarketList claseMarketList(MarketList marketList) {
+    public MarketList closeMarketList(MarketList marketList) {
         marketList.setCurrent(false);
         marketList.setBuyDate(LocalDate.now());
         repository.save(marketList);
-        return null;
+        return marketList;
     }
 
     @Override
@@ -49,15 +59,20 @@ public class MarketListServiceImpl implements MarketlListService {
         return repository.findByCurrentFalse().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
     }
 
+    @Override
+    public Void removeItem(Item item) {
+        MarketList marketList = repository.findByCurrentTrue().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
+        if (!marketList.getItemsList().contains(item)){
+            throw new MarketListException("Item não localizado na lista");
+        }else {
+            marketList.getItemsList().remove(item);
+        }
+        repository.save(marketList);
+        return null;
+    }
+
     private BigDecimal calculateTotalAmount() {
         MarketList currentMarketList = repository.findByCurrentTrue().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
-
-//        BigDecimal total = BigDecimal.ZERO;
-//
-//        for( Item item : currentMarketList.getItemsList()){
-//            total= total.add(new BigDecimal(item.getValue().toString()));
-//        }
-//        currentMarketList.setTotalAmounth(total);
         return  currentMarketList.getTotalAmounth();
 
     }

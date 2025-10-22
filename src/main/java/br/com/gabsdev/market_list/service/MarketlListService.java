@@ -12,9 +12,11 @@ public interface MarketlListService {
 
     MarketList getCurrentMarketList();
 
-    MarketList claseMarketList(MarketList marketList);
+    MarketList closeMarketList(MarketList marketList);
 
     BigDecimal getTotalAmount();
 
     List<MarketList> getAllList();
+
+    Void removeItem(Item item);
 }
