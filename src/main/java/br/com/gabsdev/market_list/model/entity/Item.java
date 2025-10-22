@@ -1,23 +1,17 @@
 package br.com.gabsdev.market_list.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.UUID;
-@Entity
+
+@Embeddable
 @AllArgsConstructor
 @Data
 public class Item {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+
     private String name;
     private BigDecimal expectedValue;
     private BigDecimal realdValue;
@@ -26,19 +20,13 @@ public class Item {
 
 
     public Item() {
-
         this.expectedValue = new BigDecimal(0);
         this.realdValue = new BigDecimal(0);
     }
 
-    public BigDecimal getValue() {
-
-        var value = realdValue.equals(BigDecimal.ZERO) ? expectedValue : realdValue;
-
-        for( int qtd = 1; qtd < this.quantity; qtd++){
-            value = value.add(new BigDecimal(value.intValue()));
-        }
-        return value;
+    public BigDecimal getTotalValue() {
+        var value = realdValue.compareTo(BigDecimal.ZERO) ==0 ? expectedValue : realdValue;
+        return value.multiply(new BigDecimal(this.quantity));
     }
 
     @Override
