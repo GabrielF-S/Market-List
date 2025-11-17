@@ -25,7 +25,10 @@ public interface MarketListController {
     @PostMapping(value = "addItem")
     ResponseEntity<MarketList> addItemToMarketList(@RequestBody Item item);
 
-    @DeleteMapping(value = "/remove")
-    ResponseEntity<Void> removeToCart(@RequestBody Item item);
+    @PostMapping(value = "updateItem")
+    ResponseEntity<Item> updateItem(@RequestBody Item item);
+
+    @PostMapping(value = "/remove")
+    ResponseEntity<MarketList> removeToCart(@RequestBody Item item);
 
 }
