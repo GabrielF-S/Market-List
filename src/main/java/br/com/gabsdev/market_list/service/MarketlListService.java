@@ -18,5 +18,7 @@ public interface MarketlListService {
 
     List<MarketList> getAllList();
 
-    Void removeItem(Item item);
+    MarketList removeItem(Item item);
+
+    Item updateItem(Item item);
 }

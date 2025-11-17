@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-
 @Service
 @AllArgsConstructor
 public class MarketListServiceImpl implements MarketlListService {
@@ -20,7 +19,7 @@ public class MarketListServiceImpl implements MarketlListService {
 
     @Override
     public MarketList addToMarketList(Item item) {
-        MarketList currentMarketList = repository.findByCurrentTrue().orElse(new MarketList());
+        MarketList currentMarketList = repository.findByCurrentTrue().orElse(MarketList.getInstance());
         if(!currentMarketList.getItemsList().contains(item)){
             currentMarketList.getItemsList().add(item);
         }else {
@@ -38,11 +37,14 @@ public class MarketListServiceImpl implements MarketlListService {
 
     @Override
     public MarketList getCurrentMarketList() {
-        return repository.findByCurrentTrue().orElse(new MarketList());
+        return repository.findByCurrentTrue().orElse(MarketList.getInstance());
     }
 
     @Override
     public MarketList closeMarketList(MarketList marketList) {
+        if (marketList.getItemsList().isEmpty()){
+            throw new MarketListException("Não é possivel concluir listas que não contenha nenhum item");
+        }
         marketList.setCurrent(false);
         marketList.setBuyDate(LocalDate.now());
         repository.save(marketList);
@@ -60,15 +62,36 @@ public class MarketListServiceImpl implements MarketlListService {
     }
 
     @Override
-    public Void removeItem(Item item) {
+    public MarketList removeItem(Item item) {
         MarketList marketList = repository.findByCurrentTrue().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
         if (!marketList.getItemsList().contains(item)){
             throw new MarketListException("Item não localizado na lista");
         }else {
             marketList.getItemsList().remove(item);
         }
+       return repository.save(marketList);
+
+    }
+
+    @Override
+    public Item updateItem(Item item) {
+        MarketList marketList = repository.findByCurrentTrue().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
+        Item itemToReturn = new Item();
+        if (!marketList.getItemsList().contains(item)){
+            throw new MarketListException("Item não localizado na lista");
+        }else {
+            for(Item i : marketList.getItemsList()){
+                if (i.equals(item)){
+                 i.setChecked(item.isChecked());
+                 i.setRealdValue(item.getRealdValue());
+                 i.setQuantity(item.getQuantity());
+                 itemToReturn = i;
+                }
+            }
+        }
         repository.save(marketList);
-        return null;
+        return itemToReturn;
+
     }
 
     private BigDecimal calculateTotalAmount() {
