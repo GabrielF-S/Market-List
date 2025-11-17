@@ -17,6 +17,7 @@ public class Item {
     private BigDecimal realdValue;
     private Boolean addedToCart;
     private int quantity;
+    private boolean checked;
 
 
     public Item() {
