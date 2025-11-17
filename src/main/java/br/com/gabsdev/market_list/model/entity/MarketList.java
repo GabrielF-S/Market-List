@@ -26,6 +26,11 @@ public class MarketList {
     private LocalDate buyDate;
     private Boolean current;
     private String marketName;
+    private boolean completed;
+
+    private static MarketList instance;
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -39,7 +44,7 @@ public class MarketList {
         return Objects.hashCode(id);
     }
 
-    public MarketList() {
+    private MarketList() {
         this.current = true;
         this.itemsList = new ArrayList<>();
         this.totalAmounth = new BigDecimal(0);
@@ -54,6 +59,13 @@ public class MarketList {
             }
         }
         return total;
+    }
+
+    public static MarketList getInstance(){
+        if (instance == null){
+            instance = new MarketList();
+        }
+        return instance;
     }
 
 }
