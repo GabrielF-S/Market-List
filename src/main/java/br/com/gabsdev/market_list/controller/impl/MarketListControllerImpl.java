@@ -16,9 +16,8 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "currentList")
+@RequestMapping(value = "api/currentList")
 @AllArgsConstructor
-@CrossOrigin(value = "http://localhost:4200/")
 public class MarketListControllerImpl implements MarketListController {
 
     private final MarketlListService service;
