@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface MarketListRepository extends JpaRepository<MarketList, UUID> {
+public interface MarketListRepository extends JpaRepository<MarketList, Long> {
 
     Optional<MarketList> findByCurrentTrue();
     Optional<List<MarketList>> findByCurrentFalse();

@@ -18,8 +18,8 @@ import java.util.UUID;
 public class MarketList {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @ElementCollection
     private List<Item> itemsList;
     private BigDecimal totalAmounth;

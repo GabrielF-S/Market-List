@@ -19,10 +19,10 @@ public class WebConfing {
 
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilterFilterRegistrationBean(){
-        List<String> all = Arrays.asList("*");
+        List<String> all = List.of("*");
 
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.setAllowedOrigins(all);
+
         corsConfiguration.setAllowedOriginPatterns(all);
         corsConfiguration.setAllowedHeaders(all);
         corsConfiguration.setAllowedMethods(all);
