@@ -1,6 +1,8 @@
 package br.com.gabsdev.market_list.config;
 
+import br.com.gabsdev.market_list.model.entity.Token;
 import br.com.gabsdev.market_list.model.entity.User;
+import br.com.gabsdev.market_list.model.repository.TokenRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -15,9 +17,15 @@ import java.util.Optional;
 @Component
 public class TokenConfig {
 
+    private final TokenRepository repository;
+
     @Value("${my.secret}")
     private String secret;
     Algorithm algorithm;
+
+    public TokenConfig(TokenRepository repository) {
+        this.repository = repository;
+    }
 
     @PostConstruct
     public void init() {
@@ -26,7 +34,7 @@ public class TokenConfig {
 
 
     public String generateToken(User user) {
-        return JWT.create()
+        String token =  JWT.create()
                 .withClaim("userId", user.getId())
                 .withSubject(user.getEmail())
                 .withExpiresAt(Instant.now().plusSeconds(86000))
@@ -34,10 +42,17 @@ public class TokenConfig {
                 .sign(algorithm);
 
 
+        Token tokenEntity = new Token();
+        tokenEntity.setTokenString(token);
+        repository.save(tokenEntity);
+        return token;
+
+
     }
 
     public Optional<JWTUserData> validateToken(String token) {
-
+        if(!repository.existsByTokenString(token))
+            throw  new JWTVerificationException("Token invalido");
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             DecodedJWT decodedJWT = JWT.require(algorithm).build().verify(token);
