@@ -7,11 +7,15 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@Embeddable
+@Entity
+@Table(name = "itens")
 @AllArgsConstructor
 @Data
 public class Item {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private BigDecimal expectedValue;
     private BigDecimal realdValue;

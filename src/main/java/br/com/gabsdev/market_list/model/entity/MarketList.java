@@ -20,7 +20,8 @@ public class MarketList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ElementCollection
+    @OneToMany(fetch =  FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "itens_id")
     private List<Item> itemsList;
     private BigDecimal totalAmounth;
     private LocalDate buyDate;
