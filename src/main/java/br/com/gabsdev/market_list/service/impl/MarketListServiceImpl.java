@@ -49,7 +49,7 @@ public class MarketListServiceImpl implements MarketlListService {
 
     @Override
     public MarketList closeMarketList(MarketList marketList) {
-        //TODO pegar a lista atual e concluir ela
+
         if (marketList.getItemsList().isEmpty()){
             throw new MarketListException("Não é possivel concluir listas que não contenha nenhum item");
         }
