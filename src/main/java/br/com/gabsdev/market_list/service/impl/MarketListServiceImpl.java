@@ -19,7 +19,8 @@ public class MarketListServiceImpl implements MarketlListService {
 
     @Override
     public MarketList addToMarketList(Item item) {
-        MarketList currentMarketList = repository.findByCurrentTrue().orElse(MarketList.getInstance());
+        item.setId(null);
+        MarketList currentMarketList = repository.findByCurrentTrue().orElse(new MarketList());
         if(!currentMarketList.getItemsList().contains(item)){
             currentMarketList.getItemsList().add(item);
         }else {
@@ -37,17 +38,26 @@ public class MarketListServiceImpl implements MarketlListService {
 
     @Override
     public MarketList getCurrentMarketList() {
-        return repository.findByCurrentTrue().orElse(MarketList.getInstance());
+        if (repository.findByCurrentTrue().isPresent()){
+            return  repository.findByCurrentTrue().get();
+        }else {
+            var list = new MarketList();
+            return repository.save(list);
+
+        }
     }
 
     @Override
     public MarketList closeMarketList(MarketList marketList) {
+        //TODO pegar a lista atual e concluir ela
         if (marketList.getItemsList().isEmpty()){
             throw new MarketListException("Não é possivel concluir listas que não contenha nenhum item");
         }
+        marketList.setCompleted(true);
         marketList.setCurrent(false);
         marketList.setBuyDate(LocalDate.now());
         repository.save(marketList);
+
         return marketList;
     }
 
@@ -83,7 +93,7 @@ public class MarketListServiceImpl implements MarketlListService {
             for(Item i : marketList.getItemsList()){
                 if (i.equals(item)){
                  i.setChecked(item.isChecked());
-                 i.setRealdValue(item.getRealdValue());
+                 i.setValue(item.getValue());
                  i.setQuantity(item.getQuantity());
                  itemToReturn = i;
                 }

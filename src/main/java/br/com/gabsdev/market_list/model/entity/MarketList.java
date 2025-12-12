@@ -29,7 +29,7 @@ public class MarketList {
     private String marketName;
     private boolean completed;
 
-    private static MarketList instance;
+
 
 
 
@@ -45,7 +45,7 @@ public class MarketList {
         return Objects.hashCode(id);
     }
 
-    private MarketList() {
+    public MarketList() {
         this.current = true;
         this.itemsList = new ArrayList<>();
         this.totalAmounth = new BigDecimal(0);
@@ -62,11 +62,6 @@ public class MarketList {
         return total;
     }
 
-    public static MarketList getInstance(){
-        if (instance == null){
-            instance = new MarketList();
-        }
-        return instance;
-    }
+
 
 }

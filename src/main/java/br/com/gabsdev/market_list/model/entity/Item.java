@@ -17,21 +17,18 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal expectedValue;
-    private BigDecimal realdValue;
+    private BigDecimal value;
     private Boolean addedToCart;
     private int quantity;
     private boolean checked;
 
 
     public Item() {
-        this.expectedValue = new BigDecimal(0);
-        this.realdValue = new BigDecimal(0);
+        this.value = new BigDecimal(0);
     }
 
     public BigDecimal getTotalValue() {
-        var value = realdValue.compareTo(BigDecimal.ZERO) ==0 ? expectedValue : realdValue;
-        return value.multiply(new BigDecimal(this.quantity));
+        return this.value.multiply(new BigDecimal(this.quantity));
     }
 
     @Override
