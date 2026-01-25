@@ -1,5 +1,6 @@
 package br.com.gabsdev.market_list.service;
 
+import br.com.gabsdev.market_list.model.dto.response.UrlResponse;
 import br.com.gabsdev.market_list.model.entity.Item;
 import br.com.gabsdev.market_list.model.entity.MarketList;
 
@@ -21,4 +22,6 @@ public interface MarketlListService {
     MarketList removeItem(Item item);
 
     Item updateItem(Item item);
+
+    UrlResponse getUrl(MarketList list, String phoneNumber);
 }

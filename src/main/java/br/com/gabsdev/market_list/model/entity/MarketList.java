@@ -62,6 +62,10 @@ public class MarketList {
         return total;
     }
 
+    public Boolean getStatus(){
+
+        return this.itemsList.stream().allMatch(Item::isChecked);
+    }
 
 
 }

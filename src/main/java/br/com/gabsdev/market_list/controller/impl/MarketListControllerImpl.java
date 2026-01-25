@@ -1,11 +1,13 @@
 package br.com.gabsdev.market_list.controller.impl;
 
 import br.com.gabsdev.market_list.controller.MarketListController;
+import br.com.gabsdev.market_list.model.dto.response.UrlResponse;
 import br.com.gabsdev.market_list.model.entity.Item;
 import br.com.gabsdev.market_list.model.entity.MarketList;
 import br.com.gabsdev.market_list.service.MarketlListService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +57,11 @@ public class MarketListControllerImpl implements MarketListController {
     @Override
     public ResponseEntity<MarketList> removeToCart(Item item) {
         return ResponseEntity.ok(service.removeItem(item));
+    }
+
+    @Override
+    public ResponseEntity<UrlResponse> sentToWhatsApp(MarketList list, String phoneNumber) {
+        return new ResponseEntity<>(service.getUrl(list, phoneNumber), HttpStatus.OK);
     }
 
     @Override

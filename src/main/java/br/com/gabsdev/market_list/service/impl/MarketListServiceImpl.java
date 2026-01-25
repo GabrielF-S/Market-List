@@ -1,6 +1,7 @@
 package br.com.gabsdev.market_list.service.impl;
 
 import br.com.gabsdev.market_list.exception.MarketListException;
+import br.com.gabsdev.market_list.model.dto.response.UrlResponse;
 import br.com.gabsdev.market_list.model.entity.Item;
 import br.com.gabsdev.market_list.model.entity.MarketList;
 import br.com.gabsdev.market_list.model.repository.MarketListRepository;
@@ -9,23 +10,30 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.util.List;
+
 @Service
-@AllArgsConstructor
 public class MarketListServiceImpl implements MarketlListService {
 
     private final MarketListRepository repository;
 
+    public MarketListServiceImpl(MarketListRepository repository) {
+        this.repository = repository;
+    }
+
     @Override
     public MarketList addToMarketList(Item item) {
         item.setId(null);
+        String itemName = item.getName();
+        item.setName(itemName.toUpperCase());
         MarketList currentMarketList = repository.findByCurrentTrue().orElse(new MarketList());
-        if(!currentMarketList.getItemsList().contains(item)){
+        if (!currentMarketList.getItemsList().contains(item)) {
             currentMarketList.getItemsList().add(item);
-        }else {
-            for(Item i : currentMarketList.getItemsList()){
-                if (i.equals(item)){
+        } else {
+            for (Item i : currentMarketList.getItemsList()) {
+                if (i.equals(item)) {
                     int qtd = i.getQuantity() + item.getQuantity();
                     i.setQuantity(qtd);
                 }
@@ -33,14 +41,14 @@ public class MarketListServiceImpl implements MarketlListService {
 
         }
         repository.save(currentMarketList);
-        return  currentMarketList;
+        return currentMarketList;
     }
 
     @Override
     public MarketList getCurrentMarketList() {
-        if (repository.findByCurrentTrue().isPresent()){
-            return  repository.findByCurrentTrue().get();
-        }else {
+        if (repository.findByCurrentTrue().isPresent()) {
+            return repository.findByCurrentTrue().get();
+        } else {
             var list = new MarketList();
             return repository.save(list);
 
@@ -50,7 +58,7 @@ public class MarketListServiceImpl implements MarketlListService {
     @Override
     public MarketList closeMarketList(MarketList marketList) {
 
-        if (marketList.getItemsList().isEmpty()){
+        if (marketList.getItemsList().isEmpty() && marketList.getStatus()) {
             throw new MarketListException("Não é possivel concluir listas que não contenha nenhum item");
         }
         marketList.setCompleted(true);
@@ -63,7 +71,7 @@ public class MarketListServiceImpl implements MarketlListService {
 
     @Override
     public BigDecimal getTotalAmount() {
-       return calculateTotalAmount();
+        return calculateTotalAmount();
     }
 
     @Override
@@ -74,12 +82,12 @@ public class MarketListServiceImpl implements MarketlListService {
     @Override
     public MarketList removeItem(Item item) {
         MarketList marketList = repository.findByCurrentTrue().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
-        if (!marketList.getItemsList().contains(item)){
+        if (!marketList.getItemsList().contains(item)) {
             throw new MarketListException("Item não localizado na lista");
-        }else {
+        } else {
             marketList.getItemsList().remove(item);
         }
-       return repository.save(marketList);
+        return repository.save(marketList);
 
     }
 
@@ -87,15 +95,15 @@ public class MarketListServiceImpl implements MarketlListService {
     public Item updateItem(Item item) {
         MarketList marketList = repository.findByCurrentTrue().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
         Item itemToReturn = new Item();
-        if (!marketList.getItemsList().contains(item)){
+        if (!marketList.getItemsList().contains(item)) {
             throw new MarketListException("Item não localizado na lista");
-        }else {
-            for(Item i : marketList.getItemsList()){
-                if (i.equals(item)){
-                 i.setChecked(item.isChecked());
-                 i.setValue(item.getValue());
-                 i.setQuantity(item.getQuantity());
-                 itemToReturn = i;
+        } else {
+            for (Item i : marketList.getItemsList()) {
+                if (i.equals(item)) {
+                    i.setChecked(item.isChecked());
+                    i.setValue(item.getValue());
+                    i.setQuantity(item.getQuantity());
+                    itemToReturn = i;
                 }
             }
         }
@@ -104,9 +112,44 @@ public class MarketListServiceImpl implements MarketlListService {
 
     }
 
+    @Override
+    public UrlResponse getUrl(MarketList list, String phoneNumber) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(createChanel(phoneNumber));
+        builder.append(createMessage(list));
+
+
+        UrlResponse response = new UrlResponse(builder.toString());
+        return response;
+
+    }
+
+    private String createMessage(MarketList list) {
+        StringBuilder message = new StringBuilder();
+
+        if (list.getMarketName().isBlank()){
+            list.setMarketName("Indefinido");
+        }
+        String totalAmount = list.getTotalAmounth().toString();
+        message.append("Mercado: "+list.getMarketName()+"\n");
+        list.getItemsList().stream().forEach(item -> {
+            message.append("[] - "+ item.getName() + " - "+
+                item.getQuantity() + " - R$"+
+                item.getTotalValue()+"\n");
+        }
+        );
+        message.append("Valor previsto: R$"+ list.getTotalAmounth()+"\n");
+        String encode = URLEncoder.encode(message.toString());
+        return encode;
+    }
+
+    private String createChanel(String phoneNumber) {
+        return "https://wa.me/+55" + phoneNumber + "?text=";
+    }
+
     private BigDecimal calculateTotalAmount() {
         MarketList currentMarketList = repository.findByCurrentTrue().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
-        return  currentMarketList.getTotalAmounth();
+        return currentMarketList.getTotalAmounth();
 
     }
 }
