@@ -76,6 +76,7 @@ public class MarketListServiceImpl implements MarketlListService {
 
     @Override
     public List<MarketList> getAllList() {
+
         return repository.findByCurrentFalse().orElseThrow(() -> new MarketListException("Nenhuma Lista encontrada"));
     }
 
@@ -127,12 +128,12 @@ public class MarketListServiceImpl implements MarketlListService {
     private String createMessage(MarketList list) {
         StringBuilder message = new StringBuilder();
 
-        if (list.getMarketName().isBlank()){
+        if (list.getMarketName() == null ||list.getMarketName().isBlank()){
             list.setMarketName("Indefinido");
         }
         String totalAmount = list.getTotalAmounth().toString();
-        message.append("Mercado: "+list.getMarketName()+"\n");
-        list.getItemsList().stream().forEach(item -> {
+        message.append("Mercado: ").append(list.getMarketName()).append("\n");
+        list.getItemsList().forEach(item -> {
             message.append("[] - "+ item.getName() + " - "+
                 item.getQuantity() + " - R$"+
                 item.getTotalValue()+"\n");
